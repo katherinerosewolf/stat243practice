@@ -1,0 +1,8 @@
+Q1
+mkdir -p ~/projects/drought
+
+Q2
+ls -lS # order of decreasing file size
+ls -lrS # order of increasing file size
+
+Q3 
