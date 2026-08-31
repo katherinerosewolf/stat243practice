@@ -6,3 +6,25 @@ ls -lS # order of decreasing file size
 ls -lrS # order of increasing file size
 
 Q3 
+zip -r tutorial-unix-basics.zip tutorial-unix-basics
+tar -cvzf tutorial-unix-basics.tgz tutorial-unix-basics
+ls -l 
+# shows that tutorial-unix-basics.zip is 2737995 bytes and 
+# tutorial-unix-basics.tgz is 2723303 bytes, so no, neither
+# is really bigger than the other, but tar wins by a bit
+
+Q4
+df --block-size=MB
+
+Q5
+/lib/cargo/bin/coreutils/ls
+
+Q6
+/bin/gzip
+a bunch, e.g., python 3.14
+
+Q7
+cp -r tutorial-unix-basics /tmp/.
+cd /tmp
+rm -r /tmp/tutorial-unix-basics/.git
+git status
