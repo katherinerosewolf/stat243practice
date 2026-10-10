@@ -30,3 +30,11 @@ grep -v x RTADataSub.csv > filtered_data.csv
 # regex challenge solution
 echo ${text} | sed -E "s/\",/\"|/g" | sed -E "s/,,/||/g
 
+# parens $() when need shell to execute syntax, ${} to get values of named variables
+
+# complications with regexes:
+## concise/hard to read
+## overloaded special characters
+## special characters versus literal characters
+## nested processing (e.g., shell [or python] --> regex engine)
+## different regex versions

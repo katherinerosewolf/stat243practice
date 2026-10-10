@@ -1,0 +1,11 @@
+dog
+doG
+dOg
+dOG
+Dog
+DoG
+DOg
+DOG
+cat
+c@t
+dOog

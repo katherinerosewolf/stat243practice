@@ -1,0 +1,137 @@
+---
+title: "Regular Expressions Tutorial Exercises"
+author: "Katherine Wolf"
+date: "09/05/2026"
+execute:
+  echo: true
+engine: knitr
+editor:
+    render-on-save: true
+render: "!/./stat243/"
+---
+**1. Match the strings “dog”, “Dog”, “dOg”, “doG”, “DOg”, etc. (The word ‘dog’ in any combination of lower and upper case.)**
+
+Create a list of all the strings to catch (and some not to catch):
+```{bash}
+cat > to_heaven.txt  # create a new text file
+
+# add words to catch to the text file
+for word in "dog" "doG" "dOg" "dOG" "Dog" "DoG" "DOg" "DOG"; do
+echo $word >> to_heaven.txt
+done
+
+# add words we don't want to catch to the text file
+for word in "cat" "c@t" "dOog"; do  
+echo $word >> to_heaven.txt
+done
+
+cat to_heaven.txt  # print contents of said text file
+```
+
+Solution that apples the regular expression `(D|d)(O|o)(G|g)` (in extended syntax to use the metacharacters `(` and `)`) to the list of strings and display the results:
+```{bash}
+echo "results of solution using grouping and or, i.e., |, symbol" 
+grep -o -E '(D|d)(O|o)(G|g)' to_heaven.txt
+
+```
+
+Solution that uses the `-i` flag that tells `grep` to ignore case with the much simpler regular expression `"dog"` instead:
+```{bash}
+echo "results of solution using grep option to ignore case"
+grep -o -E -i dog to_heaven.txt
+
+```
+
+Success!
+
+**2. Match the strings “cat”, “caat”, “caaat”, etc.**
+
+Create a list of all the strings to catch (and some not to catch):
+```{bash}
+cat > memory.txt  # create a new text file
+
+# add words to catch to the text file
+for word in "cat" "caat" "caaat" "caaaat" "caaaaat" "caaaaaat"; do
+echo $word >> memory.txt
+done
+
+# add words we don't want to catch (fully) to the text file
+for word in "CAT" "c@t" "caot" "daaag" "cata" "acat"; do  
+echo $word >> memory.txt
+done
+
+cat memory.txt  # print contents of said text file
+```
+
+Solution that matches every instance of `cat` with one or more `a` in the middle using the `+` modifier on `a`:
+```{bash}
+grep -o -E 'ca+t' memory.txt
+```
+
+Success!
+
+**3. Match the strings “cat”, “at”, and “t”.**
+
+Create a testing file with various implementations of the strings above:
+```{bash}
+cat > cats_for_king_solomon.txt
+
+echo "such a catty character" >> cats_for_king_solomon.txt
+echo "at the moment, I have no categorical objection" >> cats_for_king_solomon.txt
+echo "the caterwauling is not helping" >> cats_for_king_solomon.txt
+
+cat cats_for_king_solomon.txt
+```
+
+Solution matches every "cat" string, every "at" string not already in "cat", and every "t" string not in "cat" or "at":
+```{bash}
+grep -Eo '(cat|at|t)' cats_for_king_solomon.txt    
+```
+
+Solution that matches and outputs every "t", "at", and "cat", including those nested in other matching strings, but requires three `grep` passes through the file:
+```{bash}
+grep -Eo 'cat' cats_for_king_solomon.txt
+grep -Eo 'at' cats_for_king_solomon.txt
+grep -Eo 't' cats_for_king_solomon.txt
+```
+
+Solution that yields the same output as the solution above (in reverse order) but uses PERL regular expressions and back-references instead:
+```{bash}
+grep -Po '((?=(cat))|(?=(at))|(?=(t)))\4' cats_for_king_solomon.txt
+grep -Po '((?=(cat))|(?=(at))|(?=(t)))\3' cats_for_king_solomon.txt
+grep -Po '((?=(cat))|(?=(at))|(?=(t)))\2' cats_for_king_solomon.txt
+```
+
+**4. Match two words separated by any amount of whitespace.**
+
+Create a test file from the opening of *Mrs. Dalloway* (1925) by Virginia Woolf with random tabs and spaces between words:
+```{bash}
+cat > mrs_dalloway.txt  # make the new document
+
+echo "Mrs.   Dalloway said    she would buy  the  flowers herself." >> mrs_dalloway.txt
+echo "For Lucy had her work     cut     out for her." >> mrs_dalloway.txt 
+echo "The doors would be  taken off their hinges;   Rumpelmayer's men..." >> mrs_dalloway.txt
+
+cat mrs_dalloway.txt  # print the test file
+```
+
+This solution code below defines two functions, one that uses `grep` and an extended regular expression to match word pairs and any number of spaces or tabs between (but misses every other possible pair), and another that uses `sed` and another regular expression to remove the initial word and any amount of space at the beginning of each line of a file and feeds the result into the first function to output the other half of the consecutive word pairs. It does, however, define everything that isn't in the `"space"` class as a word.
+```{bash}
+# function that grabs word pairs (but misses every other pair):
+grab_spacious_pairs () { 
+  grep -Eo '[^[:space:]]+[[:space:]]+[^[:space:]]+' $1 
+  }
+
+# function that grabs all word pairs:
+grab_all_spacious_pairs () {
+  # matches half the word pairs
+  grab_spacious_pairs $1  
+  # deletes first word and any spaces after to match the other word pairs
+  sed 's/^[^[:space:]]*[[:space:]]\+//' $1 | grab_spacious_pairs
+  }
+
+# runs the above function on the Mrs. Dalloway file
+grab_all_spacious_pairs mrs_dalloway.txt
+```
+
+Success!

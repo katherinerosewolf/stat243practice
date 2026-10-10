@@ -1,0 +1,5 @@
+{
+    "python.defaultInterpreterPath": "/home/kathe/opt/miniforge3/envs/stat243/bin/python",
+    "python-envs.defaultEnvManager": "ms-python.python:conda",
+    "python-envs.defaultPackageManager": "ms-python.python:conda"
+}
